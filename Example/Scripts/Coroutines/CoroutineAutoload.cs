@@ -19,7 +19,7 @@ public class CoroutineAutoload : Node
 
     public static void HandleCoroutines(List<IEnumerator> coroutinesList) 
     {
-        for (int i = 0; i < coroutines.Count; i++) 
+        for (int i = 0; i < coroutinesList.Count; i++) 
         {
             bool yielded = coroutinesList[i].Current is YieldInstruction yielder && yielder.MoveNext();
             if (yielded || coroutinesList[i].MoveNext()) continue; // Guard Clauses
