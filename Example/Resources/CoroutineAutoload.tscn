@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Scripts/Coroutines/CoroutineAutoload.cs" type="Script" id=1]
+
+[node name="CoroutineAutoload" type="Node"]
+script = ExtResource( 1 )
