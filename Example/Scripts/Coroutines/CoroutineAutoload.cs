@@ -24,7 +24,9 @@ public class CoroutineAutoload : Node
             bool yielded = coroutinesList[i].Current is YieldInstruction yielder && yielder.MoveNext();
             if (yielded || coroutinesList[i].MoveNext()) continue; // Guard Clauses
 
-            coroutinesList.RemoveAt(i);
+            if (coroutineList.Count != 0) {
+                coroutineList.RemoveAt(i);
+            }
             i--;
             GC.Collect(); // This is optional
         }
