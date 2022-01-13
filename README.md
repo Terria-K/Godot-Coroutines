@@ -47,7 +47,7 @@ public class CoroutineTest : Node2D
         yield return new WaitForSignal(this, "SignalCall");
         GD.Print("Emitted");
     }
-    private IEnumeartor WaitAWhile() 
+    private IEnumerator WaitAWhile() 
     {
         yield return new WaitWhile(() => beLate == false);
         GD.Print("Im Late");
@@ -69,10 +69,11 @@ public class CoroutineTest : Node2D
 
     public override void _Ready() 
     {
-        CoroutineAutoload.StartCoroutine(WaitASecond()); // Prints out "Waited" if 2 seconds has passed out
-        CoroutineAutoload.StartCoroutine(WaitAnInput()); // Emit a signal when input was pressed
-        CoroutineAutoload.StartCoroutine(WaitASignal()); // Prints out "Emitted" if User pressed space Button
-        CoroutineAutoload.StartCoroutine(WaitAWhile()); // Prints out "Im Late" if the condition isn't met
+        AddChild(handler);
+        handler.StartCoroutine(WaitASecond()); // Prints out "Waited" if 2 seconds has passed out
+        handler.StartCoroutine(WaitAnInput()); // Emit a signal when input was pressed
+        handler.StartCoroutine(WaitASignal()); // Prints out "Emitted" if User pressed space Button
+        handler.StartCoroutine(WaitAWhile()); // Prints out "Im Late" if the condition isn't met
     }
     
     private IEnumerator WaitASecond() 
@@ -94,7 +95,7 @@ public class CoroutineTest : Node2D
         yield return new WaitForSignal(this, "SignalCall");
         GD.Print("Emitted");
     }
-    private IEnumeartor WaitAWhile() 
+    private IEnumerator WaitAWhile() 
     {
         yield return new WaitWhile(() => beLate == false);
         GD.Print("Im Late");
