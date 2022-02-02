@@ -8,12 +8,19 @@ public class EnemyInAir : Node2D
     public override void _Ready()
     {
         player = GetNode<Player>("../Player");
-        CoroutineAutoload.StartCoroutines(SevereError());   
+        CoroutineAutoload.StartCoroutines(KillPlayer());   
     }
 
-    private IEnumerator SevereError() 
+    private IEnumerator KillPlayer() 
     {
-        yield return new WaitForSeconds(5f);
+        yield return PlayerAwait();
         player.QueueFree();
+    }
+
+    private IEnumerator PlayerAwait()
+    {
+        yield return new WaitUntil(() => player.isDone);
+        GD.Print("Player is done, awaiting further instructions");
+        yield return new WaitForSeconds(2f);
     }
 }
