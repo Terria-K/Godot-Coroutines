@@ -103,4 +103,104 @@ public class CoroutineTest : Node2D
 }
 ```
 
+There are some elements that you also have to know about, the following example will use the safe coroutines:
+**Await Coroutines**
+You can await for coroutines just like how `await MyFunction()` works!
+```c#
+public class EnemyInAir : Node2D
+{
+    private Player player;
+    private CoroutineHandler handler = new CoroutineHandler();
+    
+    public override void _Ready()
+    {
+        player = GetNode<Player>("../Player");
+        handler.StartCoroutines(KillPlayer());   
+    }
+
+    private IEnumerator KillPlayer() 
+    {
+        yield return PlayerAwait(); 
+        player.QueueFree(); // Will be called once the PlayerAwait is done!
+    }
+
+    private IEnumerator PlayerAwait()
+    {
+        yield return new WaitUntil(() => player.isDone);
+        GD.Print("Player is done, awaiting further instructions");
+        yield return new WaitForSeconds(2f);
+    }
+}
+```
+
+**Wait for seconds in float**
+You can also wait for seconds but in float, which is alternative to `yield return new WaitForSeconds(seconds)`. I don't know if this is a good idea and if it performs better, but a spare dead code will be given in the `CoroutineHandler.cs` script if you don't want to have float awaiter.
+
+```c#
+public class Player : KinematicBody2D
+{
+    private Sprite sprite;
+    private CoroutineHandler handler = new CoroutineHandler();
+    public bool isDone;
+
+    public override void _Ready()
+    {
+        sprite = GetNode<Sprite>("PlayerSprite");   
+        AddChild(handler);
+        handler.StartCoroutines(FreeSpriteCoroutines());
+        handler.StartCoroutines(FloatTest());
+    }
+
+    private IEnumerator FloatTest()
+    {
+        yield return 5.5f; 
+        GD.Print("Works as usual!"); // Will call once 5.5f seconds is elapsed!
+    }
+
+    private IEnumerator FreeSpriteCoroutines() 
+    {
+        yield return new WaitForSeconds(10f);
+        isDone = true;
+        yield break;
+    }
+}
+```
+
+**Stop the coroutines**
+You can stop the coroutines aswell! But take note, you cannot stop it directly, you have to declare a variable in a fields.
+```c#
+public class Simulation : Node2D
+{
+    private Coroutine aVirus;
+    private CoroutineHandler handler = new CoroutineHandler();
+    private Computer computer;
+
+    public override void _Ready()
+    {
+        computer = GetNode<Computer>("Computer");
+        handler.StartCoroutines(KillPlayer());
+        aVirus = CoroutineAutoload.StartCoroutines(Virus());
+        handler.StartCoroutines(AntiVirus());
+    }
+
+    private IEnumerator AntiVirus()
+    {
+        yield return new WaitForSeconds(2f);
+        CoroutineAutoload.StopCoroutines(aVirus);
+    }
+
+    private IEnumerator Virus()
+    {
+        yield return new WaitForSeconds(10f);
+        Kill("computer");
+    }
+
+    private void Kill() 
+    {
+        computer.QueueFree();
+    }
+}
+
+```
+
 I hope everyone can understand this enough. As always, have a nice day!
