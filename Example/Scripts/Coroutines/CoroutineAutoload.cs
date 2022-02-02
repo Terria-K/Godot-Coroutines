@@ -88,6 +88,12 @@ public class CoroutineAutoload : Node
     {
         routines.Remove(method);
     }
+
+    public static void StopCoroutines(Coroutine coroutine)
+    {
+        routines.Remove(coroutine.routine);
+    }
+
     public static void StopAllCoroutines() 
     {
         routines.Clear();
