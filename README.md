@@ -133,33 +133,29 @@ public class EnemyInAir : Node2D
 }
 ```
 
-**Wait for seconds in float**
-You can also wait for seconds but in float, which is alternative to `yield return new WaitForSeconds(seconds)`. I don't know if this is a good idea and if it performs better, but a spare dead code will be given in the `CoroutineHandler.cs` script if you don't want to have float awaiter.
+**Wait for distance**
+You can have a timer that shows only from 0 to 1, that means you can get the progress of the timer distance. Useful for lerp.
+Idea By: WaterfordSS
+Link: https://www.reddit.com/r/Unity3D/comments/6alcoj/simple_to_use_customyieldinstruction_for_running/
 
 ```c#
 public class Player : KinematicBody2D
 {
-    private Sprite sprite;
     private CoroutineHandler handler = new CoroutineHandler();
     public bool isDone;
 
     public override void _Ready()
     {
-        sprite = GetNode<Sprite>("PlayerSprite");   
         AddChild(handler);
         handler.StartCoroutines(FreeSpriteCoroutines());
-        handler.StartCoroutines(FloatTest());
-    }
-
-    private IEnumerator FloatTest()
-    {
-        yield return 5.5f; 
-        GD.Print("Works as usual!"); // Will call once 5.5f seconds is elapsed!
     }
 
     private IEnumerator FreeSpriteCoroutines() 
     {
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForDistance(5f, (progress) => 
+        {
+            Position = new Vector2().LinearInterpolate(new Vector2(209f, 74f), progress);
+        });
         isDone = true;
         yield break;
     }
