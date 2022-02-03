@@ -142,21 +142,20 @@ Link: https://www.reddit.com/r/Unity3D/comments/6alcoj/simple_to_use_customyield
 public class Player : KinematicBody2D
 {
     private CoroutineHandler handler = new CoroutineHandler();
-    public bool isDone;
 
     public override void _Ready()
     {
         AddChild(handler);
-        handler.StartCoroutines(FreeSpriteCoroutines());
+        handler.StartCoroutines(MovePlayer());
     }
 
-    private IEnumerator FreeSpriteCoroutines() 
+    private IEnumerator MovePlayer() 
     {
         yield return new WaitForDistance(5f, (progress) => 
         {
             Position = new Vector2().LinearInterpolate(new Vector2(209f, 74f), progress);
         });
-        isDone = true;
+        GD.Print("Successfully moved!");
         yield break;
     }
 }
