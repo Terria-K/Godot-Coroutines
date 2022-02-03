@@ -6,20 +6,82 @@ using System.Collections.Generic;
 public class CoroutineAutoload : Node
 {
     private static readonly List<IEnumerator> routines = new List<IEnumerator>();
-    private static float waitTimer = 0f;
-    private static float currentTimer = 0f;
 
     public override void _Process(float delta)
     {
         Time.Update();
-        if (waitTimer > 0)
-        {
-            waitTimer -= delta;
-        }
         HandleCoroutines(routines);
     }
 
-    public static void HandleCoroutines(List<IEnumerator> coroutineList) 
+
+    public static void HandleCoroutines(List<IEnumerator> coroutineList)
+    {
+        for (int i = 0; i < coroutineList.Count; i++)
+        {
+            if (coroutineList[i].Current is IEnumerator enumerator)
+            {
+                if (Advance(enumerator))
+                {
+                    continue;
+                }
+            }
+            if (!coroutineList[i].MoveNext())
+            {
+                coroutineList.RemoveAt(i--);
+            }
+        }
+    }
+
+    public static bool Advance(IEnumerator routine)
+    {
+        if (routine.Current is IEnumerator enumerator)
+        {
+            if (Advance(enumerator))
+            {
+                return true;
+            }
+        }
+        return routine.MoveNext();
+    }
+
+    public static Coroutine StartCoroutines(IEnumerator method) 
+    {
+        routines.Add(method);
+        return new Coroutine(method);
+    }
+
+    public static void StopCoroutines(IEnumerator method) 
+    {
+        routines.Remove(method);
+    }
+
+    public static void StopCoroutines(Coroutine coroutine)
+    {
+        routines.Remove(coroutine.routine);
+    }
+
+    public static void StopAllCoroutines() 
+    {
+        routines.Clear();
+    }
+
+    ////////////////////////////////////////// Dead Code ////////////////////////////////////////////////
+    //                  Bring it back if you want to have a bugged float awaiter                       //
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /*
+     private static float currentTimer = 0f;
+     private static float waitTimer = 0f;
+     public override void _Process(float delta)
+     {
+         Time.Update();
+         if (waitTimer > 0)
+         {
+             waitTimer -= delta;
+         }
+         HandleCoroutines(routines);
+     }
+    public static void HandleCoroutines(List<IEnumerator> coroutineList)
     {
         for (int i = 0; i < coroutineList.Count; i++)
         {
@@ -77,50 +139,8 @@ public class CoroutineAutoload : Node
         }
         return routine.MoveNext();
     }
-
-    public static Coroutine StartCoroutines(IEnumerator method) 
-    {
-        routines.Add(method);
-        return new Coroutine(method);
-    }
-
-    public static void StopCoroutines(IEnumerator method) 
-    {
-        routines.Remove(method);
-    }
-
-    public static void StopCoroutines(Coroutine coroutine)
-    {
-        routines.Remove(coroutine.routine);
-    }
-
-    public static void StopAllCoroutines() 
-    {
-        routines.Clear();
-    }
-
-    ////////////////////////////////////////// Dead Code ////////////////////////////////////////////////
-    //                  Bring it back if you dont want to have a float awaiter                         //
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-    /*
-    //public static void OldHandleCoroutines(List<IEnumerator> coroutineList)
-    {
-        for (int i = 0; i < coroutineList.Count; i++)
-        {
-            if (coroutineList[i].Current is IEnumerator enumerator)
-            {
-                if (Advance(enumerator))
-                {
-                    continue;
-                }
-            }
-            if (!coroutineList[i].MoveNext())
-            {
-                coroutineList.RemoveAt(i--);
-            }
-        }
-    }
     */
+
+
 
 }

@@ -12,13 +12,6 @@ public class Player : KinematicBody2D
         sprite = GetNode<Sprite>("PlayerSprite");   
         AddChild(handler);
         handler.StartCoroutines(FreeSpriteCoroutines());
-        handler.StartCoroutines(FloatTest());
-    }
-
-    private IEnumerator FloatTest()
-    {
-        yield return 5.5f;
-        GD.Print("Works as usual!");
     }
 
     private IEnumerator FreeSpriteCoroutines() 
