@@ -185,7 +185,6 @@ public class Simulation : Node2D
     public override void _Ready()
     {
         computer = GetNode<Computer>("Computer");
-        handler.StartCoroutines(KillPlayer());
         aVirus = CoroutineAutoload.StartCoroutines(Virus());
         handler.StartCoroutines(AntiVirus());
     }
