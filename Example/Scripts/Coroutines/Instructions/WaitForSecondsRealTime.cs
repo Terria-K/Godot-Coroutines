@@ -1,10 +1,14 @@
-﻿public class WaitForSecondsRealTime : YieldInstruction
+﻿namespace Godot.Coroutines
 {
-    private readonly float finishTime;
-    public WaitForSecondsRealTime(float seconds)
+    public sealed class WaitForSecondsRealTime : YieldInstruction
     {
-        this.finishTime = seconds;
-    }
+        private readonly float finishTime;
+        public WaitForSecondsRealTime(float seconds)
+        {
+            this.finishTime = seconds;
+        }
 
-    public override bool Condition => finishTime > Time.realTime;
+        public override bool Condition => finishTime > Time.realTime;
+    }
 }
+

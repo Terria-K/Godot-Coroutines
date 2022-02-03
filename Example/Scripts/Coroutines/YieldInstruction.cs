@@ -1,16 +1,19 @@
 using System.Collections;
 
-public abstract class YieldInstruction : IEnumerator
+namespace Godot.Coroutines
 {
-    public object Current => null;
-    public abstract bool Condition { get; }
-
-    public bool MoveNext()
+    public abstract class YieldInstruction : IEnumerator
     {
-        return Condition;
-    }
+        public object Current => null;
+        public abstract bool Condition { get; }
 
-    public void Reset()
-    {
+        public bool MoveNext()
+        {
+            return Condition;
+        }
+
+        public void Reset()
+        {
+        }
     }
 }

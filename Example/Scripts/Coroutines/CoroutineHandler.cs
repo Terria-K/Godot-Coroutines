@@ -1,28 +1,29 @@
-using Godot;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class CoroutineHandler : Node2D 
+namespace Godot.Coroutines
 {
-    private List<IEnumerator> coroutines = new List<IEnumerator>();
-
-    public Coroutine StartCoroutines(IEnumerator method) 
+    public class CoroutineHandler : Node2D
     {
-        coroutines.Add(method);
-        return new Coroutine(method);
-    }
+        private List<IEnumerator> coroutines = new List<IEnumerator>();
 
-    public override void _Process(float delta) => HandleCoroutines();
+        public Coroutine StartCoroutines(IEnumerator method)
+        {
+            coroutines.Add(method);
+            return new Coroutine(method);
+        }
 
-    private void HandleCoroutines() => CoroutineAutoload.HandleCoroutines(coroutines);
+        public override void _Process(float delta) => HandleCoroutines();
 
-    private void StopCoroutines(IEnumerator method) 
-    {
-        coroutines.Remove(method);
-    }
-    private void StopAllCoroutines() 
-    {
-        coroutines.Clear();
+        private void HandleCoroutines() => CoroutineAutoload.HandleCoroutines(coroutines);
+
+        private void StopCoroutines(IEnumerator method)
+        {
+            coroutines.Remove(method);
+        }
+        private void StopAllCoroutines()
+        {
+            coroutines.Clear();
+        }
     }
 }

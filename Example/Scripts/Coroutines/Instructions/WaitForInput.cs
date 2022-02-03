@@ -1,12 +1,14 @@
-﻿using Godot;
-
-public class WaitForInput : YieldInstruction
+﻿namespace Godot.Coroutines
 {
-    private readonly string inputName;
-    public WaitForInput(string inputName)
+    public sealed class WaitForInput : YieldInstruction
     {
-        this.inputName = inputName;
-    }
+        private readonly string inputName;
+        public WaitForInput(string inputName)
+        {
+            this.inputName = inputName;
+        }
 
-    public override bool Condition => !Input.IsActionJustPressed(inputName);
+        public override bool Condition => !Input.IsActionJustPressed(inputName);
+    }
 }
+

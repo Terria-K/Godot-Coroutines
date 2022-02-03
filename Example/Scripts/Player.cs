@@ -1,4 +1,5 @@
 using Godot;
+using Godot.Coroutines;
 using System.Collections;
 
 public class Player : KinematicBody2D
@@ -16,7 +17,7 @@ public class Player : KinematicBody2D
 
     private IEnumerator FreeSpriteCoroutines() 
     {
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForDistance(5f, progress => GD.Print($"Percent of Completion: {progress.ToString()}"));
         isDone = true;
         yield break;
     }

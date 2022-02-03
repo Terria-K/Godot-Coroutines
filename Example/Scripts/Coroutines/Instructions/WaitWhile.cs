@@ -1,12 +1,16 @@
 ﻿using System;
 
-public class WaitWhile : YieldInstruction
+namespace Godot.Coroutines
 {
-    private Func<bool> WhileLoop {get;}
-    public WaitWhile(Func<bool> whileLoop)
+    public sealed class WaitWhile : YieldInstruction
     {
-        WhileLoop = whileLoop;
+        private Func<bool> WhileLoop { get; }
+        public WaitWhile(Func<bool> whileLoop)
+        {
+            WhileLoop = whileLoop;
+        }
+
+        public override bool Condition => WhileLoop();
     }
 
-    public override bool Condition => WhileLoop();
 }

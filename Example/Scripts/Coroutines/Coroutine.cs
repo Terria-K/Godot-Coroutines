@@ -1,11 +1,15 @@
 using System.Collections;
 
-public sealed class Coroutine : YieldInstruction
+namespace Godot.Coroutines
 {
-    public readonly IEnumerator routine;
-    public Coroutine(IEnumerator routine) 
+    public sealed class Coroutine : YieldInstruction
     {
-        this.routine = routine;
+        public readonly IEnumerator routine;
+        public Coroutine(IEnumerator routine)
+        {
+            this.routine = routine;
+        }
+        public override bool Condition => routine.MoveNext();
     }
-    public override bool Condition => routine.MoveNext();
 }
+

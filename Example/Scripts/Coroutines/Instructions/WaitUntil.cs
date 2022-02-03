@@ -1,12 +1,16 @@
 ﻿using System;
 
-public class WaitUntil : YieldInstruction
+namespace Godot.Coroutines
 {
-    private Func<bool> UntilCall {get;}
-    public WaitUntil(Func<bool> action)
+    public sealed class WaitUntil : YieldInstruction
     {
-        this.UntilCall = action;   
+        private Func<bool> UntilCall { get; }
+        public WaitUntil(Func<bool> action)
+        {
+            this.UntilCall = action;
+        }
+
+        public override bool Condition => !UntilCall();
     }
 
-    public override bool Condition => !UntilCall();
 }
