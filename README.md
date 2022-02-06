@@ -10,9 +10,9 @@ Here's an example on how to use this coroutines. It's not that hard but it's wor
 **Global Coroutines (Unsafe)**
 This start a coroutine globally, which means if a scene instance is gone, the coroutine is still yielding. Make sure to finish it or stop first before freeing it.
 ```c#
+using Godot.Coroutines;
 using Godot;
 using System.Collections;
-using System.Collections.Generic;
 
 public class CoroutineTest : Node2D 
 {
@@ -57,9 +57,9 @@ public class CoroutineTest : Node2D
 **Handler Coroutines (Safe)**
 This start a coroutine using a Node which is a child of the node of CoroutineTest. So if CoroutineTest instance was gone, the Handler instance was also gone.
 ```c#
+using Godot.Coroutines;
 using Godot;
 using System.Collections;
-using System.Collections.Generic;
 
 public class CoroutineTest : Node2D 
 {
@@ -107,6 +107,10 @@ There are some elements that you also have to know about, the following example 
 **Await Coroutines**
 You can await for coroutines just like how `await MyFunction()` works!
 ```c#
+using Godot.Coroutines;
+using Godot;
+using System.Collections;
+
 public class EnemyInAir : Node2D
 {
     private Player player;
@@ -133,34 +137,33 @@ public class EnemyInAir : Node2D
 }
 ```
 
-**Wait for seconds in float**
-You can also wait for seconds but in float, which is alternative to `yield return new WaitForSeconds(seconds)`. I don't know if this is a good idea and if it performs better, but a spare dead code will be given in the `CoroutineHandler.cs` script if you don't want to have float awaiter.
+**Wait for distance**
+You can have a timer that shows only from 0 to 1, that means you can get the progress of the timer distance. Useful for lerp.
+Idea By: WaterfordSS
+Link: https://www.reddit.com/r/Unity3D/comments/6alcoj/simple_to_use_customyieldinstruction_for_running/
 
 ```c#
+using Godot.Coroutines;
+using Godot;
+using System.Collections;
+
 public class Player : KinematicBody2D
 {
-    private Sprite sprite;
     private CoroutineHandler handler = new CoroutineHandler();
-    public bool isDone;
 
     public override void _Ready()
     {
-        sprite = GetNode<Sprite>("PlayerSprite");   
         AddChild(handler);
-        handler.StartCoroutines(FreeSpriteCoroutines());
-        handler.StartCoroutines(FloatTest());
+        handler.StartCoroutines(MovePlayer());
     }
 
-    private IEnumerator FloatTest()
+    private IEnumerator MovePlayer() 
     {
-        yield return 5.5f; 
-        GD.Print("Works as usual!"); // Will call once 5.5f seconds is elapsed!
-    }
-
-    private IEnumerator FreeSpriteCoroutines() 
-    {
-        yield return new WaitForSeconds(10f);
-        isDone = true;
+        yield return new WaitForDistance(5f, (progress) => 
+        {
+            Position = new Vector2().LinearInterpolate(new Vector2(209f, 74f), progress);
+        });
+        GD.Print("Successfully moved!");
         yield break;
     }
 }
@@ -169,6 +172,10 @@ public class Player : KinematicBody2D
 **Stop the coroutines**
 You can stop the coroutines aswell! But take note, you cannot stop it directly, you have to declare a variable in a fields.
 ```c#
+using Godot.Coroutines;
+using Godot;
+using System.Collections;
+
 public class Simulation : Node2D
 {
     private Coroutine aVirus;
@@ -178,7 +185,6 @@ public class Simulation : Node2D
     public override void _Ready()
     {
         computer = GetNode<Computer>("Computer");
-        handler.StartCoroutines(KillPlayer());
         aVirus = CoroutineAutoload.StartCoroutines(Virus());
         handler.StartCoroutines(AntiVirus());
     }
