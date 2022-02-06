@@ -9,7 +9,7 @@ public class EnemyInAir : Node2D
     public override void _Ready()
     {
         player = GetNode<Player>("../Player");
-        CoroutineAutoload.StartCoroutines(KillPlayer());
+        CoroutineAutoload.StartCoroutine(KillPlayer());
     }
 
     private IEnumerator KillPlayer() 

@@ -3,27 +3,59 @@ using System.Collections.Generic;
 
 namespace Godot.Coroutines
 {
-    public class CoroutineHandler : Node2D
+    public class CoroutineHandler : Node
     {
-        private List<IEnumerator> coroutines = new List<IEnumerator>();
+        private static readonly List<IEnumerator> routines = new List<IEnumerator>();
+        private static readonly List<IEnumerator> physicsRoutines = new List<IEnumerator>();
+        private static readonly List<IEnumerator> lateRoutines = new List<IEnumerator>();
 
-        public Coroutine StartCoroutines(IEnumerator method)
+        public override void _Process(float delta)
         {
-            coroutines.Add(method);
+            if (routines.Count > 0)
+            CoroutineAutoload.HandleCoroutines(routines);
+            CallDeferred(nameof(LateProcess));
+        }
+
+        public override void _PhysicsProcess(float delta)
+        {
+            if (physicsRoutines.Count > 0)
+            {
+                CoroutineAutoload.HandleCoroutines(physicsRoutines);
+            }
+        }
+
+        private void LateProcess()
+        {
+            if (lateRoutines.Count > 0)
+            {
+                CoroutineAutoload.HandleCoroutines(lateRoutines);
+            }
+        }
+
+        public Coroutine StartCoroutine(IEnumerator method, CoroutineType coroutineType = CoroutineType.Process)
+        {
+            switch (coroutineType)
+            {
+                case CoroutineType.Process:
+                    routines.Add(method);
+                    break;
+                case CoroutineType.PhysicsProcess:
+                    physicsRoutines.Add(method);
+                    break;
+                case CoroutineType.LateProcess:
+                    lateRoutines.Add(method);
+                    break;
+            }
             return new Coroutine(method);
         }
 
-        public override void _Process(float delta) => HandleCoroutines();
-
-        private void HandleCoroutines() => CoroutineAutoload.HandleCoroutines(coroutines);
-
-        private void StopCoroutines(IEnumerator method)
+        public void StopCoroutine(IEnumerator method)
         {
-            coroutines.Remove(method);
+            routines.Remove(method);
         }
-        private void StopAllCoroutines()
+        public void StopAllCoroutines()
         {
-            coroutines.Clear();
+            routines.Clear();
         }
     }
 }

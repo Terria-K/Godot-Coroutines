@@ -5,14 +5,18 @@ namespace Godot.Coroutines
 {
     public class CoroutineAutoload : Node
     {
-        private static readonly List<IEnumerator> routines = new List<IEnumerator>();
+
+        private static readonly CoroutineHandler handler = new CoroutineHandler();
+
+        public override void _Ready()
+        {
+            AddChild(handler);
+        }
 
         public override void _Process(float delta)
         {
             Time.Update();
-            HandleCoroutines(routines);
         }
-
 
         public static void HandleCoroutines(List<IEnumerator> coroutineList)
         {
@@ -44,25 +48,24 @@ namespace Godot.Coroutines
             return routine.MoveNext();
         }
 
-        public static Coroutine StartCoroutines(IEnumerator method)
+        public static Coroutine StartCoroutine(IEnumerator method, CoroutineType coroutineType = CoroutineType.Process)
         {
-            routines.Add(method);
-            return new Coroutine(method);
+            return handler.StartCoroutine(method, coroutineType);
         }
 
         public static void StopCoroutines(IEnumerator method)
         {
-            routines.Remove(method);
+            handler.StopCoroutine(method);
         }
 
         public static void StopCoroutines(Coroutine coroutine)
         {
-            routines.Remove(coroutine.routine);
+            handler.StopCoroutine(coroutine);
         }
 
         public static void StopAllCoroutines()
         {
-            routines.Clear();
+            handler.StopAllCoroutines();
         }
 
         ////////////////////////////////////////// Dead Code ////////////////////////////////////////////////

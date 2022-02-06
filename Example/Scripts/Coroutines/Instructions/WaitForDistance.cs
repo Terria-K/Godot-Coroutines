@@ -4,15 +4,15 @@ namespace Godot.Coroutines
 {
     public sealed class WaitForDistance : YieldInstruction
     {
-        private Action<float> apply;
+        private readonly Action<float> apply;
+        private readonly float duration;
         private float timer;
-        private float duration;
 
         public WaitForDistance(float duration, Action<float> apply)
         {
+            Reset();
             this.duration = duration;
             this.apply = apply;
-            Reset();
         }
 
         public override bool Condition
