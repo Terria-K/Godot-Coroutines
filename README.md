@@ -49,7 +49,12 @@ public class CoroutineTest : Node2D
     }
     private IEnumerator WaitAWhile() 
     {
-        yield return new WaitWhile(() => beLate == false);
+        // yield return new WaitWhile(() => beLate == false);
+        // Suggested to use a while loop instead
+        while (beLate == false) 
+        {
+            yield return null;
+        }
         GD.Print("Im Late");
     }
 }
