@@ -24,7 +24,10 @@ public class Player : KinematicBody2D
     private Vector2 Slerp(Vector2 src, Vector2 dst, float speed)
     {
         float len = src.Length();
-        return src.Normalized().Slerp(dst.Normalized(), speed) * len;
+        Vector2 normalizedSource = src.Normalized();
+        Vector2 normalizedDistance = dst.Normalized();
+
+        return normalizedSource.Slerp(normalizedDistance, speed) * len;
     }
 
     private void GetCenter(Vector2 from, Vector2 to, Vector2 direction)
