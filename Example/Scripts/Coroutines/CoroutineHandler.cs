@@ -5,57 +5,76 @@ namespace Godot.Coroutines
 {
     public class CoroutineHandler : Node
     {
-        private static readonly List<IEnumerator> routines = new List<IEnumerator>();
-        private static readonly List<IEnumerator> physicsRoutines = new List<IEnumerator>();
-        private static readonly List<IEnumerator> lateRoutines = new List<IEnumerator>();
+        private readonly List<IEnumerator> routines = new List<IEnumerator>();
+        private List<float> delays = new List<float>();
 
         public override void _Process(float delta)
         {
-            if (routines.Count > 0)
-            CoroutineAutoload.HandleCoroutines(routines);
-            CallDeferred(nameof(LateProcess));
+            HandleCoroutines(routines);
         }
 
-        public override void _PhysicsProcess(float delta)
+        public void HandleCoroutines(List<IEnumerator> coroutineList)
         {
-            if (physicsRoutines.Count > 0)
+            if (coroutineList.Count < 0) 
             {
-                CoroutineAutoload.HandleCoroutines(physicsRoutines);
+                return;
+            }
+            for (int i = 0; i < coroutineList.Count; i++)
+            {
+                if (delays[i] > 0f) 
+                {
+                    delays[i] -= Time.deltaTime;
+                    continue;
+                }
+                if (!Advance(coroutineList[i], i))
+                {
+                    coroutineList.RemoveAt(i);
+                    delays.RemoveAt(i--);   
+                }
             }
         }
 
-        private void LateProcess()
+        private bool Advance(IEnumerator routine, int current)
         {
-            if (lateRoutines.Count > 0)
+            if (routine.Current is IEnumerator enumerator)
             {
-                CoroutineAutoload.HandleCoroutines(lateRoutines);
+                if (Advance(enumerator, current))
+                {
+                    return true;
+                }
+                delays[current] = 0f;
             }
+            bool doMove = routine.MoveNext();
+
+            if (routine.Current is float time) 
+                delays[current] = time;
+
+            return doMove;
         }
 
-        public Coroutine StartCoroutine(IEnumerator method, CoroutineType coroutineType = CoroutineType.Process)
+        public Coroutine StartCoroutine(IEnumerator method)
         {
-            switch (coroutineType)
-            {
-                case CoroutineType.Process:
-                    routines.Add(method);
-                    break;
-                case CoroutineType.PhysicsProcess:
-                    physicsRoutines.Add(method);
-                    break;
-                case CoroutineType.LateProcess:
-                    lateRoutines.Add(method);
-                    break;
-            }
+            routines.Add(method);
+            delays.Add(0f);
             return new Coroutine(method);
         }
 
         public void StopCoroutine(IEnumerator method)
         {
-            routines.Remove(method);
+            int i = routines.IndexOf(method);
+            routines.RemoveAt(i);
+            delays[i] = 0f;
         }
+        
+        public void StopCoroutine(Coroutine coroutine) 
+        {
+            StopCoroutine(coroutine.routine);
+        }
+
         public void StopAllCoroutines()
         {
             routines.Clear();
+            delays.Clear();
         }
     }
 }

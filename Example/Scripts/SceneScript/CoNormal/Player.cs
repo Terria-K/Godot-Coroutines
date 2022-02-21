@@ -5,7 +5,6 @@ using System.Collections;
 public class Player : KinematicBody2D
 {
     private readonly CoroutineHandler handler = new CoroutineHandler();
-    [Export] private readonly CoroutineType coroutineType = CoroutineType.Process;
     public bool isDone;
 
 
@@ -18,38 +17,29 @@ public class Player : KinematicBody2D
     public override void _Ready()
     {
         AddChild(handler);
-        handler.StartCoroutine(FreeSpriteCoroutines(), coroutineType);
+        handler.StartCoroutine(Multiple());
+        handler.StartCoroutine(FreeSpriteCoroutines());
     }
 
-    private Vector2 Slerp(Vector2 src, Vector2 dst, float speed)
+    private IEnumerator Multiple() 
     {
-        float len = src.Length();
-        Vector2 normalizedSource = src.Normalized();
-        Vector2 normalizedDistance = dst.Normalized();
-
-        return normalizedSource.Slerp(normalizedDistance, speed) * len;
-    }
-
-    private void GetCenter(Vector2 from, Vector2 to, Vector2 direction)
-    {
-        centerPoint = (startPos + endPos) * 0.5f;
-        centerPoint -= direction;
-        startRelCenter = from - centerPoint;
-        endRelCenter = to - centerPoint;
+        yield return 3f;
+        GD.Print("RUN!");
     }
 
     private IEnumerator FreeSpriteCoroutines() 
     {
-        WaitForDistance waitForDistance = new WaitForDistance(3f, (progress) =>
-        {
-            GetCenter(startPos, endPos, Vector2.Up);
-            Position = Slerp(startRelCenter, endRelCenter, progress);
-            RotationDegrees = Mathf.Lerp(0, 360, progress);
-            Position += centerPoint;
-        });
-        yield return waitForDistance;
+        yield return 3f;
+        yield return AnotherBlocker();
         isDone = true;
         yield break;
+    }
+
+    private IEnumerator AnotherBlocker() 
+    {
+        GD.Print("Blocked Hahaha!");
+        yield return 4f;
+        GD.Print("Oh gosh you win");
     }
 }
 

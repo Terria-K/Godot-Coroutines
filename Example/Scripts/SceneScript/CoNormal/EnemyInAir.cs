@@ -20,8 +20,11 @@ public class EnemyInAir : Node2D
 
     private IEnumerator PlayerAwait()
     {
-        yield return new WaitUntil(() => player.isDone);
+        while (!player.isDone) 
+        {
+            yield return null;
+        }
         GD.Print("Player is done, awaiting further instructions");
-        yield return new WaitForSeconds(2f);
+        yield return 2f;
     }
 }
