@@ -30,9 +30,9 @@ public class CoroutineTest : Node2D
     
     private IEnumerator WaitASecond() 
     {
-        yield return new WaitForSeconds(2f);
+        yield return 2f;
         GD.Print("Waited"); // Will print after 2 seconds.
-        yield return new WaitForSeconds(10f);
+        yield return 10f;
         beLate = true;
     }
     
@@ -49,7 +49,10 @@ public class CoroutineTest : Node2D
     }
     private IEnumerator WaitAWhile() 
     {
-        yield return new WaitWhile(() => beLate == false);
+        while (beLate == false) 
+        {
+            yield return null;
+        }
         GD.Print("Im Late");
     }
 }
@@ -78,9 +81,9 @@ public class CoroutineTest : Node2D
     
     private IEnumerator WaitASecond() 
     {
-        yield return new WaitForSeconds(2f);
+        yield return 2f;
         GD.Print("Waited"); // Will print after 2 seconds.
-        yield return new WaitForSeconds(10f);
+        yield return 10f;
         beLate = true;
     }
     
@@ -97,13 +100,17 @@ public class CoroutineTest : Node2D
     }
     private IEnumerator WaitAWhile() 
     {
-        yield return new WaitWhile(() => beLate == false);
+        while (beLate == false) 
+        {
+            yield return null;
+        }
         GD.Print("Im Late");
     }
 }
 ```
 
 There are some elements that you also have to know about, the following example will use the safe coroutines:
+
 **Await Coroutines**
 You can await for coroutines just like how `await MyFunction()` works!
 ```c#
@@ -130,9 +137,12 @@ public class EnemyInAir : Node2D
 
     private IEnumerator PlayerAwait()
     {
-        yield return new WaitUntil(() => player.isDone);
+        while (!player.isDone) 
+        {
+            yield return null; // Required!
+        }
         GD.Print("Player is done, awaiting further instructions");
-        yield return new WaitForSeconds(2f);
+        yield return 2f;
     }
 }
 ```
@@ -191,13 +201,13 @@ public class Simulation : Node2D
 
     private IEnumerator AntiVirus()
     {
-        yield return new WaitForSeconds(2f);
+        yield return 2f;
         CoroutineAutoload.StopCoroutines(aVirus);
     }
 
     private IEnumerator Virus()
     {
-        yield return new WaitForSeconds(10f);
+        yield return 10f;
         Kill("computer");
     }
 
