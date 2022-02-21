@@ -10,25 +10,25 @@ namespace Godot.Coroutines
 
         public override void _Process(float delta)
         {
-            HandleCoroutines(routines);
+            HandleCoroutines();
         }
 
-        public void HandleCoroutines(List<IEnumerator> coroutineList)
+        public void HandleCoroutines()
         {
-            if (coroutineList.Count < 0) 
+            if (routines.Count < 0) 
             {
                 return;
             }
-            for (int i = 0; i < coroutineList.Count; i++)
+            for (int i = 0; i < routines.Count; i++)
             {
                 if (delays[i] > 0f) 
                 {
                     delays[i] -= Time.deltaTime;
                     continue;
                 }
-                if (!Advance(coroutineList[i], i))
+                if (!Advance(routines[i], i))
                 {
-                    coroutineList.RemoveAt(i);
+                    routines.RemoveAt(i);
                     delays.RemoveAt(i--);   
                 }
             }

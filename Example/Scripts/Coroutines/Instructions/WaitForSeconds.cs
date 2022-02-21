@@ -2,7 +2,7 @@
 
 namespace Godot.Coroutines
 {
-    [Obsolete("Use the float instead!")]
+    [Obsolete("Use float instead!")]
     public sealed class WaitForSeconds : YieldInstruction
     {
         private readonly float finishTime;

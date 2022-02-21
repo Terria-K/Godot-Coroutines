@@ -23,7 +23,7 @@ public class Player : KinematicBody2D
 
     private IEnumerator Multiple() 
     {
-        yield return 3f;
+        yield return 6f;
         GD.Print("RUN!");
     }
 
