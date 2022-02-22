@@ -3,6 +3,8 @@ A coroutines for Godot C# with yielding and instruction.
 
 I implement this coroutines because I had some issues using async-await on C#. I am using this in most of my projects and I can say it's very nice indeed. I don't have any performance benchmark on this so I don't know how is this perform well compare to async-await. It support running multiple coroutines at once just like how threads works, but be aware that this is not a thread, it uses a game loop instead.
 
+This coroutine is inspired by ChevyRay's Coroutine: https://github.com/ChevyRay/Coroutines/blob/master/Coroutines.cs with a slight improvements to be able to handle it in Godot.
+
 # How to Use It?
 
 Here's an example on how to use this coroutines. It's not that hard but it's worth it.
